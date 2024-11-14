@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<link href="/project1/libs/css/bootstrap.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="/project1/libs/css/leaflet.css">
+		<link rel="stylesheet" href="/project1/libs/css/styles.css">
+		<link rel="stylesheet" href="/project1/libs/css/MarkerCluster.css">
+		<link rel="stylesheet" href="/project1/libs/css/MarkerCluster.Default.css">
+		<link rel="stylesheet" href="/project1/libs/css/leaflet.extra-markers.min.css">
+		<link rel="stylesheet" href="/project1/libs/css/easy-button.css">
+		<link href="/project1/libs/css/fontawesome/css/fontawesome.css" rel="stylesheet">
+		<link href="/project1/libs/css/fontawesome/css/solid.css" rel="stylesheet">
+		<title>Gazetteer</title>
+		<meta name="description" content="Gazetteer Project">
+		<meta name="author" content="Ben Holmes">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	</head>
+	<body>
+		<div class="preloader"></div>
+		<div class="container-fluid">
+			<div class="row align-items-center bg-dark text-light" id="headerBar">
+				<div class="col-5"> 
+					<h1 class="display-3" id="title">Map</h1> 
+				</div>
+				<div class="col-7 col-lg-3" id="btnBox">
+					<div class="navBtns">
+						<i class='fa-solid fa-earth-americas fa-2x' id="mapBtn"></i>
+						<i class="fa-solid fa-eraser fa-2x" id="eraseBtn"></i>
+					</div>
+				</div>
+				<div class="col-12 col-lg-4">
+					<div class="selectBoxDiv">
+						<select class="form-select bg-light text-dark" id="selectBox">
+							<option selected="selected">
+								View Another Country
+							</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div id="map" class='col-12'></div>
+			</div>
+		</div>
+		<!-- Weather Forecast Modal -->
+		<div class="modal fade" id="weatherModal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header text-center d-block bg-dark text-light">
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col-12 fs-2" id="placename"></div>
+							</div>
+							<div class="row d-none d-lg-block">
+								<div class="col-12 fs-6" id="latlon"></div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-body bg-dark text-light">
+						<div class="container-fluid">
+							<!-- Weather Day 1 -->
+							<div class="row">
+								<div class="col-6">
+									<div class="icon-box">
+										<i id="weather1-Img"></i>
+								<!-- <i class="fa-solid fa-mountain fa-3x"></i>
+									<i class="fa-solid fa-water fa-3x"></i>
+									<i class="fa-solid fa-person fa-3x"></i> -->
+										<p id="weather1-Desc"></p>
+									</div>
+								</div>
+								<div class="col-6">
+									<p id="weather1-Date"></p>
+									<p id="weather1-Temp"></p>
+									<p id="weather1-Humidity"></p>
+								</div>
+							</div>
+							<hr class="d-none d-lg-block"/>
+							<!-- Weather Day 2 -->
+							<div class="row">
+								<div class="col-6">
+									<div class="icon-box">
+										<i id="weather2-Img"></i>
+										<p id="weather2-Desc"></p>
+									</div>
+								</div>
+								<div class="col-6">
+									<p id="weather2-Date"></p>
+									<p id="weather2-Temp"></p>
+									<p id="weather2-Humidity"></p>
+								</div>
+							</div>
+							<hr class="d-none d-lg-block"/>
+							<!-- Weather Day 3 -->
+							<div class="row">
+								<div class="col-6">
+									<div class="icon-box">
+										<i id="weather3-Img"></i>
+										<p id="weather3-Desc"></p>
+									</div>
+								</div>
+								<div class="col-6">
+									<p id="weather3-Date"></p>
+									<p id="weather3-Temp"></p>
+									<p id="weather3-Humidity"></p>
+								</div>
+							</div>
+							<hr class="d-none d-lg-block"/>
+							<!-- Weather Day 4 -->
+							<div class="row">
+								<div class="col-6">
+									<div class="icon-box">
+										<i id="weather4-Img"></i>
+										<p id="weather4-Desc"></p>
+									</div>
+								</div>
+								<div class="col-6">
+									<p id="weather4-Date"></p>
+									<p id="weather4-Temp"></p>
+									<p id="weather4-Humidity"></p>
+								</div>
+							</div>
+							<hr class="d-none d-lg-block"/>
+							<!-- Weather Day 5 -->
+							<div class="row">
+								<div class="col-6">
+									<div class="icon-box">
+										<i id="weather5-Img"></i>
+										<p id="weather5-Desc"></p>
+									</div>
+								</div>
+								<div class="col-6">
+									<p id="weather5-Date"></p>
+									<p id="weather5-Temp"></p>
+									<p id="weather5-Humidity"></p>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+					<div class="modal-footer bg-dark text-light">
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col">
+									<div class="exitButton">
+										<button type='button' class="btn-close btn-close-white" aria-label="Close">
+										</button>
+									</div>
+								</div>
+								<div class="col">
+									<div class="infoPage">
+										<p>
+											Info Page &#x2192;
+										</p>
+									</div>
+								</div>
+							</div>
+						
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Information Modal -->
+		<div class="modal fade" id="infoModal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header text-center d-block bg-dark text-light">
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col-12 fs-2" id="placename2"></div>
+							</div>
+							<div class="row d-none d-lg-block">
+								<div class="col-12 fs-6" id="latlon2"></div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-body bg-dark text-light text-center">
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col-6 col-lg-12">
+									<p id="countryName"></p>
+								</div>
+								<div class="col-6 col-lg-12">
+									<p id="population"></p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-12">
+									<div class="flagContainer">
+										<img id="flag">
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-6 col-lg-12">
+									<p id="capital"></p>
+								</div>
+								<div class="col-6 col-lg-12">
+									<p id="continentName"></p>
+								</div>
+							</div>
+							<hr />
+							<div class="row">
+								<div class="exchangeBox">
+									<div class="col-12">
+										<p id="currencyCode" class="display-6 fw-bold"></p>
+									</div>
+								</div>
+							</div>
+							<div class="row d-none d-lg-block">
+								<div class="col-12" >
+									<div class="walletBox">
+										<i class="fa-solid fa-wallet fa-3x">  </i>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-12 p-3">
+									<p> Exchange Rates: </p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-2">
+									<i id="leftIcon1"></i>
+								</div>
+								<div class="col-8">
+									<p id="exchange1"></p>
+								</div>
+								<div class="col-2">
+									<i class="fa-solid fa-sterling-sign"></i>
+								</div>
+							</div>
+							<hr class="d-none d-lg-block"/>
+							<div class="row">
+								<div class="col-2">
+									<i id="leftIcon2"></i>
+								</div>
+								<div class="col-8">
+									<p id="exchange2"></p>
+								</div>
+								<div class="col-2">
+									<i class="fa-solid fa-dollar-sign"></i>
+								</div>
+							</div>
+							<hr class="d-none d-lg-block"/>
+							<div class="row">
+								<div class="col-2">
+									<i id="leftIcon3"></i>
+								</div>
+								<div class="col-8">
+									<p id="exchange3"></p>
+								</div>
+								<div class="col-2">
+									<i class="fa-solid fa-euro-sign"></i>
+								</div>
+							</div>
+							<hr class="d-none d-lg-block"/>
+							<div class="row">
+								<div class="col-2">
+									<i id="leftIcon4"></i>
+								</div>
+								<div class="col-8">
+									<p id="exchange4"></p>
+								</div>
+								<div class="col-2">
+									<i class="fa-solid fa-yen-sign"></i>
+								</div>
+							</div>
+							<hr class="d-none d-lg-block"/>
+							<div class="row">
+								<div class="col-2">
+									<i id="leftIcon5"></i>
+								</div>
+								<div class="col-8">
+									<p id="exchange5"></p>
+								</div>
+								<div class="col-2">
+									<i class="fa-solid fa-won-sign"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer bg-dark text-light">
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col">
+									<div class="exitButton">
+										<button type='button' class="btn-close btn-close-white" aria-label="Close">
+										</button>
+									</div>
+								</div>
+								<div class="col">
+									<div class="weatherPage">
+										<p>
+											Weather &#x2192;
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		
+		<script type="application/javascript" src="libs/js/jquery-2.2.3.min.js"></script>
+		<script src="/project1/libs/js/leaflet.js"></script>
+		<script src="/project1/libs/js/leaflet-providers.js"></script>
+		<script src="/project1/libs/js/leaflet.markercluster.js"></script>
+		<script src="/project1/libs/js/leaflet.extra-markers.min.js"></script>
+		<script src="/project1/libs/js/easy-button.js"></script>
+		<script type="application/javascript" src="libs/js/script.js"></script>
+		<script src="/project1/libs/js/bootstrap.min.js"></script>
+	
+	</body>
+</html>
